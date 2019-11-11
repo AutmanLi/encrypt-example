@@ -1,0 +1,104 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Write your model definitions here
+ */
+
+namespace encrypt.transaction.example
+
+// HE 部分同态加密部分
+// 使用HE加密的消费者
+participant consumer_HE identified by consumerID {
+  o String consumerID
+  o String balance
+  o String Name
+  o String publicKey
+  o String TrueName //真实姓名，用SM4加密上链
+}
+
+// 使用HE加密的商品
+asset commodity_HE identified by commodityID {
+  o String commodityID
+  o String price
+  --> consumer_HE owner
+} 
+
+
+// 基于HE同态加密的加法/减法,增加/减少用户的余额
+ transaction HE_add_balance {
+   --> consumer_HE user
+   o String addBalance
+ }
+
+ // 基于HE的商品交易
+transaction transaction_by_HE {
+  --> commodity_HE com
+  --> consumer_HE newOwner
+  // 商品对购买者的价格密文，在本地加密好
+  o String priceForBuyer 
+  // 商品对贩卖者的价格密文，在本地加密好
+  o String priceForSeller
+}
+
+// FHE 全同态加密部分
+// 使用FHE加密的消费者
+participant consumer_FHE identified by consumerID {
+  o String consumerID
+  o String balance
+  o String Name
+  o String publicKey
+  o String context
+}
+
+// 使用HE加密的商品
+asset commodity_FHE identified by commodityID {
+  o String commodityID
+  o String price
+  --> consumer_FHE owner
+} 
+
+// 基于FHE的全同态加密加法
+transaction FHE_add_balance {
+  --> consumer_FHE user
+  o String addBalance
+  o String context
+  o String publicKey
+}
+
+// 基于FHE的全同态加密减法
+transaction FHE_sub_balance {
+  --> consumer_FHE user
+  o String subBalance
+ o String context
+  o String publicKey
+}
+
+// 基于FHE的全同态加密乘法
+transaction FHE_mul_balance {
+  --> consumer_FHE user
+  o String mulBalance
+  o String context
+  o String publicKey
+}
+
+// 基于FHE的商品交易
+transaction transaction_by_FHE {
+  --> commodity_FHE com
+  --> consumer_FHE newOwner
+  o String priceForBuyer
+  o String priceForSeller
+}
+
+

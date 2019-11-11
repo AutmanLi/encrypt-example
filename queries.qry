@@ -1,0 +1,12 @@
+/**
+ * New query file
+ */
+
+query selectAllFileByUser {
+    description: "Select all drivers who has the following interests"
+    statement:
+        SELECT fileacl.fileInfo
+  		    WHERE (_$ownerParam==owner)
+           
+}
+
